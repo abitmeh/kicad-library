@@ -95,7 +95,7 @@ jobs:
           name: Release ${{ steps.get_version.outputs.version }}
           files: ${{ env.ARCHIVE_PATH }}
           body: |
-            KiCAD Library Release ${{ steps.get_version.outputs.version }}
+            KiCad Library Release ${{ steps.get_version.outputs.version }}
             
             **Download Information:**
             - File: ${{ env.ARCHIVE_NAME }}
