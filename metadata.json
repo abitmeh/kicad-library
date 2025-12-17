@@ -1,0 +1,26 @@
+{
+  "$schema": "https://go.kicad.org/pcm/schemas/v1",
+  "name": "KiCad Example Library",
+  "description": "A KiCad library with example symbols and footprints for common components",
+  "description_full": "This library provides symbol and footprint libraries for common electronic components including resistors and capacitors in standard SMD packages.",
+  "identifier": "com.github.abitmeh.kicad-library",
+  "type": "library",
+  "author": {
+    "name": "abitmeh",
+    "contact": {
+      "web": "https://github.com/abitmeh/kicad-library"
+    }
+  },
+  "maintainer": {
+    "name": "abitmeh",
+    "contact": {
+      "web": "https://github.com/abitmeh/kicad-library"
+    }
+  },
+  "license": "MIT",
+  "resources": {
+    "homepage": "https://github.com/abitmeh/kicad-library",
+    "repository": "https://github.com/abitmeh/kicad-library"
+  },
+  "versions": []
+}

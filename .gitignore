@@ -1,0 +1,21 @@
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+package/
+*.zip
+
+# Node.js (used in workflows)
+node_modules/
+update_metadata.js
+update_repository.js
+
+# Release files
+release.zip

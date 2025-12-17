@@ -1,0 +1,10 @@
+{
+  "name": "KiCad Example Library Repository",
+  "maintainer": {
+    "name": "abitmeh",
+    "contact": {
+      "web": "https://github.com/abitmeh/kicad-library"
+    }
+  },
+  "packages": []
+}
