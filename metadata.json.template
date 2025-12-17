@@ -1,0 +1,26 @@
+{
+  "$schema": "https://go.kicad.org/pcm/schemas/v1",
+  "name": "YOUR_LIBRARY_NAME_HERE",
+  "description": "Short description of your library",
+  "description_full": "Detailed description of what this library contains and its purpose. Explain what symbols, footprints, or other content are included.",
+  "identifier": "com.github.YOUR_USERNAME.YOUR_REPOSITORY",
+  "type": "library",
+  "author": {
+    "name": "YOUR_NAME_HERE",
+    "contact": {
+      "web": "https://github.com/YOUR_USERNAME/YOUR_REPOSITORY"
+    }
+  },
+  "maintainer": {
+    "name": "YOUR_NAME_HERE",
+    "contact": {
+      "web": "https://github.com/YOUR_USERNAME/YOUR_REPOSITORY"
+    }
+  },
+  "license": "MIT",
+  "resources": {
+    "homepage": "https://github.com/YOUR_USERNAME/YOUR_REPOSITORY",
+    "repository": "https://github.com/YOUR_USERNAME/YOUR_REPOSITORY"
+  },
+  "versions": []
+}
