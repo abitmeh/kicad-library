@@ -55,14 +55,23 @@ jobs:
             echo "tag=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
             
             # Download the asset to calculate SHA256 and size
-            ASSET_URL=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.event.release.tag_name }} | jq -r '.assets[0].browser_download_url')
+            # Filter for kicad-library-*.zip pattern
+            ASSET_URL=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.event.release.tag_name }} | jq -r '.assets[] | select(.name | test("kicad-library-.*\\.zip$")) | .browser_download_url' | head -n 1)
             if [ -n "$ASSET_URL" ] && [ "$ASSET_URL" != "null" ]; then
-              curl -L -o release.zip "$ASSET_URL"
-              SHA256=$(sha256sum release.zip | awk '{print $1}')
-              SIZE=$(stat -c%s release.zip)
-              echo "sha256=${SHA256}" >> $GITHUB_OUTPUT
-              echo "size=${SIZE}" >> $GITHUB_OUTPUT
+              echo "Downloading asset from: $ASSET_URL"
+              if curl -L -f -o release.zip "$ASSET_URL"; then
+                SHA256=$(sha256sum release.zip | awk '{print $1}')
+                SIZE=$(stat -c%s release.zip)
+                echo "sha256=${SHA256}" >> $GITHUB_OUTPUT
+                echo "size=${SIZE}" >> $GITHUB_OUTPUT
+                echo "Downloaded successfully: SHA256=$SHA256, Size=$SIZE"
+              else
+                echo "Error: Failed to download asset"
+                echo "sha256=" >> $GITHUB_OUTPUT
+                echo "size=0" >> $GITHUB_OUTPUT
+              fi
             else
+              echo "Warning: No matching asset found"
               echo "sha256=" >> $GITHUB_OUTPUT
               echo "size=0" >> $GITHUB_OUTPUT
             fi

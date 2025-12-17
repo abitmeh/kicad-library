@@ -37,17 +37,26 @@ jobs:
           VERSION="${{ steps.get_version.outputs.version }}"
           ARCHIVE_NAME="kicad-library-${VERSION}.zip"
           
+          # Validate that library content exists
+          if [ ! -d "symbols" ] && [ ! -d "footprints" ] && [ ! -d "3dmodels" ]; then
+            echo "Error: No library content found. At least one of symbols/, footprints/, or 3dmodels/ must exist."
+            exit 1
+          fi
+          
           # Create a temporary directory for the package
           mkdir -p package
           
           # Copy library content (symbols, footprints, etc.)
           if [ -d "symbols" ]; then
+            echo "Including symbols directory"
             cp -r symbols package/
           fi
           if [ -d "footprints" ]; then
+            echo "Including footprints directory"
             cp -r footprints package/
           fi
           if [ -d "3dmodels" ]; then
+            echo "Including 3dmodels directory"
             cp -r 3dmodels package/
           fi
           
