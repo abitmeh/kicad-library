@@ -1,6 +1,6 @@
 # Setup Checklist
 
-Use this checklist to ensure your KiCAD library is properly configured and ready for releases.
+Use this checklist to ensure your KiCad library is properly configured and ready for releases.
 
 ## Initial Configuration
 
@@ -36,12 +36,12 @@ Use this checklist to ensure your KiCAD library is properly configured and ready
 
 - [ ] **Add your symbols**
   - [ ] Add `.kicad_sym` files to `symbols/` directory
-  - [ ] Verify symbol files are valid KiCAD format
+  - [ ] Verify symbol files are valid KiCad format
 
 - [ ] **Add your footprints**
   - [ ] Create `.pretty` directories in `footprints/`
   - [ ] Add `.kicad_mod` files to each `.pretty` directory
-  - [ ] Verify footprint files are valid KiCAD format
+  - [ ] Verify footprint files are valid KiCad format
 
 - [ ] **Add 3D models (optional)**
   - [ ] Add `.step`, `.wrl`, or other 3D model files to `3dmodels/`
@@ -93,10 +93,10 @@ Use this checklist to ensure your KiCAD library is properly configured and ready
   - [ ] Verify SHA256 hash is present
   - [ ] Verify download URL is correct
 
-## Test in KiCAD (Optional)
+## Test in KiCad (Optional)
 
-- [ ] **Add repository to KiCAD PCM**
-  - [ ] Open KiCAD
+- [ ] **Add repository to KiCad PCM**
+  - [ ] Open KiCad
   - [ ] Go to Tools → Plugin and Content Manager
   - [ ] Settings → Add repository
   - [ ] Add URL: `https://raw.githubusercontent.com/USERNAME/REPOSITORY/main/repository.json`
@@ -153,8 +153,8 @@ If something doesn't work:
 
 ## Resources
 
-- [KiCAD PCM Documentation](https://dev-docs.kicad.org/en/addons/)
-- [KiCAD Library Conventions](https://klc.kicad.org/)
+- [KiCad PCM Documentation](https://dev-docs.kicad.org/en/addons/)
+- [KiCad Library Conventions](https://klc.kicad.org/)
 - [Semantic Versioning](https://semver.org/)
 - Repository README.md
 - Repository QUICKSTART.md

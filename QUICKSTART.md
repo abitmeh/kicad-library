@@ -125,13 +125,13 @@ Examples:
 - Check that directories are committed to repository
 - Review workflow logs for errors
 
-## Using Your Library in KiCAD
+## Using Your Library in KiCad
 
-### Method 1: KiCAD Plugin and Content Manager
+### Method 1: KiCad Plugin and Content Manager
 
-Users can add your repository to KiCAD's PCM:
+Users can add your repository to KiCad's PCM:
 
-1. Open KiCAD
+1. Open KiCad
 2. Tools → Plugin and Content Manager
 3. Settings → Add repository
 4. Enter your repository.json URL:
@@ -142,7 +142,7 @@ Users can add your repository to KiCAD's PCM:
 
 1. Download the release zip from GitHub Releases
 2. Extract the contents
-3. Add library paths in KiCAD:
+3. Add library paths in KiCad:
    - Preferences → Manage Symbol Libraries
    - Preferences → Manage Footprint Libraries
 

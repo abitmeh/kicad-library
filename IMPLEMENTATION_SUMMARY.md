@@ -2,22 +2,22 @@
 
 ## Overview
 
-This repository has been set up as a complete KiCAD library package with automated GitHub Actions workflows for creating releases and managing metadata for the KiCAD Plugin and Content Manager (PCM).
+This repository has been set up as a complete KiCad library package with automated GitHub Actions workflows for creating releases and managing metadata for the KiCad Plugin and Content Manager (PCM).
 
 ## Files Created
 
 ### Core Files
 
 1. **metadata.json**
-   - KiCAD Package Manager metadata file
+   - KiCad Package Manager metadata file
    - Contains library information (name, description, author, license)
    - Includes a `versions` array that is automatically populated by workflows
-   - Follows the KiCAD PCM schema v1
+   - Follows the KiCad PCM schema v1
 
 2. **repository.json**
    - Package repository listing file
    - Contains list of packages (automatically synchronized with metadata.json)
-   - Used by KiCAD PCM to discover and list available packages
+   - Used by KiCad PCM to discover and list available packages
 
 3. **LICENSE**
    - MIT License file
@@ -110,9 +110,9 @@ The workflows automatically maintain accurate metadata:
    - Verify workflows execute successfully
    - Check that metadata files are updated
 
-4. **Use in KiCAD**:
+4. **Use in KiCad**:
    - Share repository.json URL with users
-   - Users can add the repository in KiCAD PCM
+   - Users can add the repository in KiCad PCM
    - Or users can download releases manually
 
 ## Technical Details
@@ -148,7 +148,7 @@ The release zip is named `kicad-library-{version}.zip` by default. To change thi
 - Edit `ARCHIVE_NAME` in release.yml (line 38)
 - Update the download_url pattern in update-metadata.yml (line 67)
 
-### KiCAD Version
+### KiCad Version
 
 The metadata specifies `kicad_version: "6.0"`. To change:
 - Edit the `kicad_version` field in update-metadata.yml (line 63)
@@ -171,7 +171,7 @@ All files have been validated:
 - ✅ JSON files are valid (metadata.json, repository.json)
 - ✅ YAML files are valid (release.yml, update-metadata.yml)
 - ✅ Workflows follow GitHub Actions best practices
-- ✅ Metadata follows KiCAD PCM schema v1
+- ✅ Metadata follows KiCad PCM schema v1
 
 ## Support
 

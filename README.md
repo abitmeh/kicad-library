@@ -1,15 +1,15 @@
-# KiCAD Library
+# KiCad Library
 
-A KiCAD library repository with automated GitHub Actions workflows for creating releases and managing metadata.
+A KiCad library repository with automated GitHub Actions workflows for creating releases and managing metadata.
 
 ## Repository Structure
 
 ```
 kicad-library/
-├── symbols/              # KiCAD symbol libraries (.kicad_sym files)
-├── footprints/           # KiCAD footprint libraries (.pretty directories)
+├── symbols/              # KiCad symbol libraries (.kicad_sym files)
+├── footprints/           # KiCad footprint libraries (.pretty directories)
 ├── 3dmodels/            # Optional: 3D models for footprints
-├── metadata.json        # KiCAD Package Manager metadata
+├── metadata.json        # KiCad Package Manager metadata
 ├── repository.json      # Package repository listing
 └── .github/
     └── workflows/
@@ -113,11 +113,11 @@ This file lists all packages in your repository. It will be automatically update
    - Update metadata.json and repository.json
    - Commit the metadata changes
 
-## Installing in KiCAD
+## Installing in KiCad
 
-Users can install your library in KiCAD using the Plugin and Content Manager:
+Users can install your library in KiCad using the Plugin and Content Manager:
 
-1. Open KiCAD
+1. Open KiCad
 2. Go to Plugin and Content Manager
 3. Add your repository URL
 4. Install your library package
