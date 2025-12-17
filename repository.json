@@ -6,5 +6,42 @@
       "web": "https://github.com/abitmeh/kicad-library"
     }
   },
-  "packages": []
+  "packages": [
+    {
+      "$schema": "https://go.kicad.org/pcm/schemas/v1",
+      "name": "A bit meh KiCad Library",
+      "description": "A KiCad library with symbols and footprints used by a bit meh projects",
+      "description_full": "A KiCad library with symbols and footprints used by a bit meh projects",
+      "identifier": "com.github.abitmeh.kicad-library",
+      "type": "library",
+      "author": {
+        "name": "abitmeh",
+        "contact": {
+          "web": "https://github.com/abitmeh/kicad-library"
+        }
+      },
+      "maintainer": {
+        "name": "abitmeh",
+        "contact": {
+          "web": "https://github.com/abitmeh/kicad-library"
+        }
+      },
+      "license": "MIT",
+      "resources": {
+        "homepage": "https://github.com/abitmeh/kicad-library",
+        "repository": "https://github.com/abitmeh/kicad-library"
+      },
+      "versions": [
+        {
+          "version": "0.0.1",
+          "status": "stable",
+          "kicad_version": "6.0",
+          "download_url": "https://github.com/abitmeh/kicad-library/releases/download/0.0.1/kicad-library-0.0.1.zip",
+          "download_sha256": "",
+          "download_size": 0,
+          "install_size": 0
+        }
+      ]
+    }
+  ]
 }
