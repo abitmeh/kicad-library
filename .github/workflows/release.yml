@@ -1,0 +1,115 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.0.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+            echo "tag=v${{ inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+            echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create release archive
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          ARCHIVE_NAME="kicad-library-${VERSION}.zip"
+          
+          # Create a temporary directory for the package
+          mkdir -p package
+          
+          # Copy library content (symbols, footprints, etc.)
+          if [ -d "symbols" ]; then
+            cp -r symbols package/
+          fi
+          if [ -d "footprints" ]; then
+            cp -r footprints package/
+          fi
+          if [ -d "3dmodels" ]; then
+            cp -r 3dmodels package/
+          fi
+          
+          # Copy metadata
+          if [ -f "metadata.json" ]; then
+            cp metadata.json package/
+          fi
+          
+          # Copy README if exists
+          if [ -f "README.md" ]; then
+            cp README.md package/
+          fi
+          
+          # Copy LICENSE if exists
+          if [ -f "LICENSE" ]; then
+            cp LICENSE package/
+          fi
+          
+          # Create the zip archive
+          cd package
+          zip -r "../${ARCHIVE_NAME}" .
+          cd ..
+          
+          echo "ARCHIVE_NAME=${ARCHIVE_NAME}" >> $GITHUB_ENV
+          echo "ARCHIVE_PATH=${ARCHIVE_NAME}" >> $GITHUB_ENV
+
+      - name: Calculate SHA256
+        id: sha256
+        run: |
+          SHA256=$(sha256sum ${{ env.ARCHIVE_PATH }} | awk '{print $1}')
+          echo "sha256=${SHA256}" >> $GITHUB_OUTPUT
+          echo "SHA256: ${SHA256}"
+
+      - name: Get file size
+        id: filesize
+        run: |
+          SIZE=$(stat -c%s "${{ env.ARCHIVE_PATH }}")
+          echo "size=${SIZE}" >> $GITHUB_OUTPUT
+          echo "File size: ${SIZE} bytes"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.get_version.outputs.tag }}
+          name: Release ${{ steps.get_version.outputs.version }}
+          files: ${{ env.ARCHIVE_PATH }}
+          body: |
+            KiCAD Library Release ${{ steps.get_version.outputs.version }}
+            
+            **Download Information:**
+            - File: ${{ env.ARCHIVE_NAME }}
+            - SHA256: ${{ steps.sha256.outputs.sha256 }}
+            - Size: ${{ steps.filesize.outputs.size }} bytes
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Output release info
+        run: |
+          echo "Release created successfully!"
+          echo "Version: ${{ steps.get_version.outputs.version }}"
+          echo "Archive: ${{ env.ARCHIVE_NAME }}"
+          echo "SHA256: ${{ steps.sha256.outputs.sha256 }}"
+          echo "Size: ${{ steps.filesize.outputs.size }} bytes"

@@ -1,0 +1,185 @@
+name: Update Metadata
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.0.0)'
+        required: true
+        type: string
+      tag:
+        description: 'Git tag (e.g., v1.0.0)'
+        required: true
+        type: string
+      sha256:
+        description: 'SHA256 hash of the release archive'
+        required: true
+        type: string
+      size:
+        description: 'Size of the release archive in bytes'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  update-metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Get release information
+        id: release_info
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+            echo "tag=${{ inputs.tag }}" >> $GITHUB_OUTPUT
+            echo "sha256=${{ inputs.sha256 }}" >> $GITHUB_OUTPUT
+            echo "size=${{ inputs.size }}" >> $GITHUB_OUTPUT
+          else
+            VERSION="${{ github.event.release.tag_name }}"
+            VERSION="${VERSION#v}"
+            echo "version=${VERSION}" >> $GITHUB_OUTPUT
+            echo "tag=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+            
+            # Download the asset to calculate SHA256 and size
+            ASSET_URL=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.event.release.tag_name }} | jq -r '.assets[0].browser_download_url')
+            if [ -n "$ASSET_URL" ] && [ "$ASSET_URL" != "null" ]; then
+              curl -L -o release.zip "$ASSET_URL"
+              SHA256=$(sha256sum release.zip | awk '{print $1}')
+              SIZE=$(stat -c%s release.zip)
+              echo "sha256=${SHA256}" >> $GITHUB_OUTPUT
+              echo "size=${SIZE}" >> $GITHUB_OUTPUT
+            else
+              echo "sha256=" >> $GITHUB_OUTPUT
+              echo "size=0" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Update metadata.json
+        run: |
+          cat > update_metadata.js << 'EOF'
+          const fs = require('fs');
+          
+          const version = process.env.VERSION;
+          const tag = process.env.TAG;
+          const sha256 = process.env.SHA256;
+          const size = process.env.SIZE;
+          const repo = process.env.GITHUB_REPOSITORY;
+          
+          // Read existing metadata.json
+          let metadata = {};
+          if (fs.existsSync('metadata.json')) {
+            metadata = JSON.parse(fs.readFileSync('metadata.json', 'utf8'));
+          }
+          
+          // Ensure versions array exists
+          if (!metadata.versions) {
+            metadata.versions = [];
+          }
+          
+          // Create new version entry
+          const newVersion = {
+            version: version,
+            status: 'stable',
+            kicad_version: '6.0',
+            download_url: `https://github.com/${repo}/releases/download/${tag}/kicad-library-${version}.zip`,
+            download_sha256: sha256,
+            download_size: parseInt(size),
+            install_size: parseInt(size)
+          };
+          
+          // Check if version already exists
+          const existingIndex = metadata.versions.findIndex(v => v.version === version);
+          if (existingIndex >= 0) {
+            metadata.versions[existingIndex] = newVersion;
+          } else {
+            metadata.versions.unshift(newVersion);
+          }
+          
+          // Sort versions (newest first)
+          metadata.versions.sort((a, b) => {
+            const aParts = a.version.split('.').map(Number);
+            const bParts = b.version.split('.').map(Number);
+            for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+              const aNum = aParts[i] || 0;
+              const bNum = bParts[i] || 0;
+              if (aNum !== bNum) return bNum - aNum;
+            }
+            return 0;
+          });
+          
+          // Write updated metadata.json
+          fs.writeFileSync('metadata.json', JSON.stringify(metadata, null, 2));
+          console.log('Updated metadata.json');
+          EOF
+          
+          VERSION="${{ steps.release_info.outputs.version }}" \
+          TAG="${{ steps.release_info.outputs.tag }}" \
+          SHA256="${{ steps.release_info.outputs.sha256 }}" \
+          SIZE="${{ steps.release_info.outputs.size }}" \
+          GITHUB_REPOSITORY="${{ github.repository }}" \
+          node update_metadata.js
+
+      - name: Update repository.json
+        run: |
+          cat > update_repository.js << 'EOF'
+          const fs = require('fs');
+          
+          // Read metadata.json
+          const metadata = JSON.parse(fs.readFileSync('metadata.json', 'utf8'));
+          
+          // Read existing repository.json or create new one
+          let repository = {};
+          if (fs.existsSync('repository.json')) {
+            repository = JSON.parse(fs.readFileSync('repository.json', 'utf8'));
+          }
+          
+          // Ensure packages array exists
+          if (!repository.packages) {
+            repository.packages = [];
+          }
+          
+          // Find or create package entry
+          let packageIndex = repository.packages.findIndex(p => p.identifier === metadata.identifier);
+          
+          if (packageIndex >= 0) {
+            // Update existing package with metadata
+            repository.packages[packageIndex] = { ...metadata };
+          } else {
+            // Add new package
+            repository.packages.push({ ...metadata });
+          }
+          
+          // Write updated repository.json
+          fs.writeFileSync('repository.json', JSON.stringify(repository, null, 2));
+          console.log('Updated repository.json');
+          EOF
+          
+          node update_repository.js
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          git add metadata.json repository.json
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update metadata for version ${{ steps.release_info.outputs.version }}"
+            git push
+          fi
